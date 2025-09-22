@@ -70,7 +70,8 @@ defmodule TheMastermind.MixProject do
       {:nostrum, github: "Kraigie/nostrum", depth: 1, override: true},
       {:dotenv, github: "avdi/dotenv_elixir", depth: 1},
       {:cachex, github: "whitfin/cachex", depth: 1},
-      {:nimble_csv, "~> 1.3"}
+      {:nimble_csv, "~> 1.3"},
+      {:logger_file_backend, "~> 0.0.13"}
     ]
   end
 
