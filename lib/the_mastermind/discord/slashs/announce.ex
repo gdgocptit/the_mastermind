@@ -28,12 +28,12 @@ defmodule TheMastermind.Discord.Slashs.Announce do
 
     {:ok, %{channel_id: message_channel_id, message_id: message_id}} = parse_message_link(message_link)
 
-    {:ok, %Nostrum.Struct.Message{content: msg_content}} = Nostrum.Api.Message.get(message_channel_id, message_id)
+    {:ok, %Nostrum.Struct.Message{content: msg_content, embeds: msg_embeds}} = Nostrum.Api.Message.get(message_channel_id, message_id)
 
     received_announce_button = interaction_button("Đã nhận thông báo", "received_announce_submit", style: 3)
     action_row = action_row([received_announce_button])
 
-    {:ok, announcement} = Nostrum.Api.Message.create(channel_id, content: msg_content, components: [action_row])
+    {:ok, announcement} = Nostrum.Api.Message.create(channel_id, content: msg_content, components: [action_row], embeds: msg_embeds)
 
     TheMastermind.Repo.insert(%TheMastermind.Interaction.Announcement{message_id: announcement.id})
 

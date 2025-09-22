@@ -10,7 +10,8 @@ defmodule TheMastermind.Consumer do
     guild_id = Application.get_env(:the_mastermind, :guild_id)
 
     slashs = [
-      Nosedrum.Storage.Dispatcher.add_command("announce", TheMastermind.Discord.Slashs.Announce, guild_id)
+      Nosedrum.Storage.Dispatcher.add_command("announce", TheMastermind.Discord.Slashs.Announce, guild_id),
+      Nosedrum.Storage.Dispatcher.add_command("delete", TheMastermind.Discord.Slashs.DelAnnounce, guild_id)
     ]
 
     Nostrum.Api.Self.update_status(:online, {:listening, "localhost:4000"})
