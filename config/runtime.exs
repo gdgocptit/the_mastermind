@@ -105,6 +105,10 @@ if config_env() == :prod do
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
 
+  # ## Configuring logging to file
+  #
+  # Configure logger to write to production.log file
+
   # ## Configuring the mailer
   #
   # In production you need to configure the mailer to use a different adapter.

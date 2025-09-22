@@ -67,7 +67,17 @@ config :the_mastermind, TheMastermindWeb.Endpoint,
 config :the_mastermind, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :default_formatter, format: "[$level] $message\n"
+# config :logger, :default_formatter, format: "[$date $time] [$level] $message\n"
+
+config :logger,
+  level: :info,
+  backends: [:console, {LoggerFileBackend, :file}]
+
+config :logger, :file,
+  path: "production.log",
+  level: :info,
+  format: "[$date $time] [$level] $message\n",
+  metadata: [:request_id]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
