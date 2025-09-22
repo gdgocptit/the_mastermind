@@ -36,7 +36,7 @@ defmodule TheMastermind.Discord.Slashs.DelAnnounce do
       [embeds: [response_embed]]
     else
       response_embed = %Nostrum.Struct.Embed{}
-      |> put_description("Link message được chỉ định không phải là một thông báo")
+      |> put_description("Link message được chỉ định không phải là một thông báo\n\n**Hoặc**\n\nĐã bị xóa trước đó!")
       |> put_color(0xEB4034)
 
       [embeds: [response_embed]]
