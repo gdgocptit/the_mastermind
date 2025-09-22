@@ -1,0 +1,19 @@
+defmodule TheMastermind.Account.User do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "users" do
+    field :name, :string
+    field :student_id, :string
+    field :discord_id, :integer
+
+    timestamps(type: :utc_datetime)
+  end
+
+  @doc false
+  def changeset(user, attrs) do
+    user
+    |> cast(attrs, [:name, :student_id, :discord_id])
+    |> validate_required([:name, :student_id])
+  end
+end

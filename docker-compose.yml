@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: the_mastermind_dev
+    volumes:
+      - the_mastermind_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - the_mastermind-networks
+
+volumes:
+  the_mastermind_data:
+  
+networks:
+  the_mastermind-networks:
+    driver: bridge
