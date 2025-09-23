@@ -6,6 +6,7 @@ defmodule TheMastermind.Account.User do
     field :name, :string
     field :student_id, :string
     field :discord_id, :integer
+    field :discord_role_id, :integer
 
     timestamps(type: :utc_datetime)
   end
@@ -13,7 +14,7 @@ defmodule TheMastermind.Account.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :student_id, :discord_id])
+    |> cast(attrs, [:name, :student_id, :discord_id, :discord_role_id])
     |> validate_required([:name, :student_id])
   end
 end

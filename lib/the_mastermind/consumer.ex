@@ -39,6 +39,14 @@ defmodule TheMastermind.Consumer do
         record_by_student_id = TheMastermind.Repo.get_by(User, student_id: student_id)
         Account.update_user(record_by_student_id, %{discord_id: discord_id})
 
+        if record_by_student_id.discord_role_id do
+          Nostrum.Api.Guild.add_member_role(
+            Application.get_env(:the_mastermind, :guild_id),
+            discord_id,
+            record_by_student_id.discord_role_id
+          )
+        end
+
         handle_submitted_received_announcement(interaction)
 
       _ -> :ok
