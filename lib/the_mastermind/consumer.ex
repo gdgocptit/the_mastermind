@@ -37,17 +37,85 @@ defmodule TheMastermind.Consumer do
         discord_id = interaction.member.user_id
 
         record_by_student_id = TheMastermind.Repo.get_by(User, student_id: student_id)
-        Account.update_user(record_by_student_id, %{discord_id: discord_id})
+        if record_by_student_id.discord_id do
+          response_embed = %Nostrum.Struct.Embed{}
+          |> put_description("Mã sinh viên không hợp lệ hoặc đã xác minh rồi!")
+          |> put_color(0xEB4034)
 
-        if record_by_student_id.discord_role_id do
-          Nostrum.Api.Guild.add_member_role(
-            Application.get_env(:the_mastermind, :guild_id),
-            discord_id,
-            record_by_student_id.discord_role_id
-          )
+          Nostrum.Api.Interaction.create_response(interaction, %{
+            type: 4,
+            data: %{
+              embeds: [response_embed],
+              flags: 64
+            }
+          })
+        else
+          Account.update_user(record_by_student_id, %{discord_id: discord_id})
+
+          if record_by_student_id.discord_role_id do
+            Nostrum.Api.Guild.add_member_role(
+              Application.get_env(:the_mastermind, :guild_id),
+              discord_id,
+              record_by_student_id.discord_role_id
+            )
+          end
+
+          handle_submitted_received_announcement(interaction)
         end
 
-        handle_submitted_received_announcement(interaction)
+      "probation_team_selection_modal" ->
+        [%Nostrum.Struct.Message.Component{components: [input_component]}] = interaction.data.components
+        student_id = String.upcase(input_component.value)
+        discord_id = interaction.member.user_id
+
+        record_by_student_id = TheMastermind.Repo.get_by(User, student_id: student_id)
+        if record_by_student_id.discord_id do
+          response_embed = %Nostrum.Struct.Embed{}
+          |> put_description("Mã sinh viên không hợp lệ hoặc bạn đã xác minh rồi!")
+          |> put_color(0xEB4034)
+
+          Nostrum.Api.Interaction.create_response(interaction, %{
+            type: 4,
+            data: %{
+              embeds: [response_embed],
+              flags: 64
+            }
+          })
+        else
+          Account.update_user(record_by_student_id, %{discord_id: discord_id})
+
+          if record_by_student_id.discord_role_id do
+            Nostrum.Api.Guild.add_member_role(
+              Application.get_env(:the_mastermind, :guild_id),
+              discord_id,
+              record_by_student_id.discord_role_id
+            )
+
+            response_embed = %Nostrum.Struct.Embed{}
+            |> put_description("Thành công! Chào mừng bạn về với đội của <@&#{record_by_student_id.discord_role_id}> !")
+            |> put_color(0x32A852)
+
+            Nostrum.Api.Interaction.create_response(interaction, %{
+              type: 4,
+              data: %{
+                embeds: [response_embed],
+                flags: 64
+              }
+            })
+          else
+            response_embed = %Nostrum.Struct.Embed{}
+            |> put_description("Bạn không thuộc đội nào cả!")
+            |> put_color(0xEB4034)
+
+            Nostrum.Api.Interaction.create_response(interaction, %{
+              type: 4,
+              data: %{
+                embeds: [response_embed],
+                flags: 64
+              }
+            })
+          end
+        end
 
       _ -> :ok
     end
@@ -70,6 +138,22 @@ defmodule TheMastermind.Consumer do
           handle_submitted_received_announcement(interaction)
         end
 
+      "probation_team_selection_submit" ->
+        if !Account.exists_by_discord_id?(interaction.member.user_id) do
+          handle_input_student_id_modal(interaction, "probation_team_selection_modal")
+        else
+          response_embed = %Nostrum.Struct.Embed{}
+          |> put_description("Bạn đã xác minh trong hệ thống !")
+          |> put_color(0xEB4034)
+
+          Nostrum.Api.Interaction.create_response(interaction, %{
+            type: 4,
+            data: %{
+              embeds: [response_embed],
+              flags: 64
+            }
+          })
+        end
 
       _ -> :ok
     end
@@ -104,7 +188,7 @@ defmodule TheMastermind.Consumer do
     })
   end
 
-  defp handle_input_student_id_modal(interaction) do
+  defp handle_input_student_id_modal(interaction, custom_id \\ nil) do
     student_id_input = %{
       type: 4,
       custom_id: "student_id",
@@ -121,7 +205,7 @@ defmodule TheMastermind.Consumer do
       type: 9,
       data: %{
         title: "Yêu cầu mã sinh viên",
-        custom_id: "received_announce_modal",
+        custom_id: custom_id || "received_announce_modal",
         components: [action_row]
       }
     })
