@@ -1,13 +1,10 @@
-# TheMastermind
+<h1 style="display: flex; align-items: center;"> <img src="./TheMastermind.png" width="50" /> The Mastermind</h1>
 
-To start your Phoenix server:
+To start your Bot & Phoenix server:
 
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+* Start docker for database using `docker compose up -d`.
+* Download project dependencies from https://hex.pm/ using `mix deps.get && mix deps.compile`
+* Run your Bot using `mix phx.server`
 
 ## Learn more
 
