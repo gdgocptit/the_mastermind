@@ -71,6 +71,6 @@ defmodule TheMastermind.Discord.Slashs.Profile do
     |> put_field("Tỷ lệ confirm thông báo", "#{user_announcement_submission_count * 100 / total_announcement_count}%", false)
     |> put_field("Mã sinh viên", "```#{user_data.student_id}```", false)
 
-    [embeds: [response_embed], ephemeral?: true]
+    [embeds: [response_embed]]
   end
 end
