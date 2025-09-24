@@ -4,9 +4,8 @@ defmodule TheMastermind.Interaction.AnnouncementSubmission do
   import Ecto.Changeset
 
   schema "announcement_submissions" do
-    field :discord_id, :integer
-
     belongs_to :announcement, TheMastermind.Interaction.Announcement
+    belongs_to :user, TheMastermind.Account.User, foreign_key: :discord_id, references: :discord_id
 
     timestamps(type: :utc_datetime)
   end

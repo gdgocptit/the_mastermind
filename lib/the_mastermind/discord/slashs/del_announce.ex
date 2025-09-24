@@ -1,4 +1,3 @@
-
 defmodule TheMastermind.Discord.Slashs.DelAnnounce do
   import Ecto.Query, only: [from: 2]
   alias Nostrum.Struct.ApplicationCommandInteractionDataOption

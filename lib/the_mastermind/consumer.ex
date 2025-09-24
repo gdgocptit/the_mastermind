@@ -5,13 +5,16 @@ defmodule TheMastermind.Consumer do
 
   @behaviour Nostrum.Consumer
 
+  @restricted_command_allowed_roles [1419708808325763112, 1418968590803271741, 1420333470533554278, 1418439987254267984]
+
   def handle_event({:READY, _ready, _ws_state}) do
     :logger.info("Bot is ready!")
     guild_id = Application.get_env(:the_mastermind, :guild_id)
 
     slashs = [
       Nosedrum.Storage.Dispatcher.add_command("announce", TheMastermind.Discord.Slashs.Announce, guild_id),
-      Nosedrum.Storage.Dispatcher.add_command("delete", TheMastermind.Discord.Slashs.DelAnnounce, guild_id)
+      Nosedrum.Storage.Dispatcher.add_command("delete", TheMastermind.Discord.Slashs.DelAnnounce, guild_id),
+      Nosedrum.Storage.Dispatcher.add_command("profile", TheMastermind.Discord.Slashs.Profile, guild_id)
     ]
 
     Nostrum.Api.Self.update_status(:online, {:listening, "localhost:4000"})
@@ -23,6 +26,27 @@ defmodule TheMastermind.Consumer do
         {:error, reason} -> :logger.error("Failed to register command: #{inspect(reason)}")
       end
     end)
+  end
+
+  def handle_event({:INTERACTION_CREATE, interaction, _ws_state}) when interaction.type == 2 and (interaction.data.name == "announce" or interaction.data.name == "delete") do
+
+    have_allowed_roles = interaction.member.roles |> Enum.any?(fn r -> r in @restricted_command_allowed_roles end)
+    if have_allowed_roles do
+      Nosedrum.Storage.Dispatcher.handle_interaction(interaction)
+    else
+      response_embed = %Nostrum.Struct.Embed{}
+      |> put_description("Bạn không có quyền sử dụng lệnh này!")
+      |> put_color(0xEB4034)
+
+      Nostrum.Api.Interaction.create_response(interaction, %{
+        type: 4,
+        data: %{
+          embeds: [response_embed],
+          flags: 64
+        }
+      })
+    end
+
   end
 
   def handle_event({:INTERACTION_CREATE, interaction, _ws_state}) when interaction.type == 2 do

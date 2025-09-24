@@ -8,6 +8,10 @@ defmodule TheMastermind.Account.User do
     field :discord_id, :integer
     field :discord_role_id, :integer
 
+    has_many :announcement_submissions, TheMastermind.Interaction.AnnouncementSubmission,
+      foreign_key: :discord_id,
+      references: :discord_id
+
     timestamps(type: :utc_datetime)
   end
 
